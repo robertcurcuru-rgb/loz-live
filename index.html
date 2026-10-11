@@ -1400,6 +1400,8 @@ svg.leaflet-image-layer.leaflet-interactive path {
   .a2hs[hidden] { display: none; }
   .a2hs span { flex: 1; } .a2hs svg { vertical-align: -2px; }
   .a2hs button { border: 0; background: none; color: #fff; font-size: 22px; min-width: 40px; min-height: 36px; }
+
+  .nocam-badge { display: inline-block; margin-right: 6px; padding: 2px 8px; border-radius: 999px; background: #4b5563; color: #fff; font-size: 12px; letter-spacing: .02em; }
 </style>
 <link rel="icon" href="data:,">
 </head>
@@ -1472,7 +1474,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
     <span class="map-ad-text">Your ad here <em>· placeholder slot</em></span>
     <button class="map-ad-x" id="mapAdClose" type="button" aria-label="Hide sponsored banner" title="Hide">×</button>
   </aside>
-      <p class="fine" style="margin:0 0 10px">Only venues with a verified Spyder cam URL are pinned; each pin sits at the venue's geocoded street address (OpenStreetMap/Nominatim), not Spyder's coordinates. Pin <strong>icon</strong> = category (anchor = boat-up, fork/wave = lake-view dining, glass = off-water); pin <strong>colour</strong> = sample busyness. Categories come only from Spyder cams, venue sites and july3_venue_data.json (see venues.csv category_source). Dashed amber ring = location approximate. Blue tab = Spyder poolside cam.</p>
+      <p class="fine" style="margin:0 0 10px">Venues with a verified Spyder cam URL are pinned, plus (since 11 Oct 2026) verified top-20 boat-up venues with no cam, whose card says "No cam"; each pin sits at the venue's geocoded street address (OpenStreetMap/Nominatim), not Spyder's coordinates. Pin <strong>icon</strong> = category (anchor = boat-up, fork/wave = lake-view dining, glass = off-water); pin <strong>colour</strong> = sample busyness. Categories come only from Spyder cams, venue sites and july3_venue_data.json (see venues.csv category_source). Dashed amber ring = location approximate. Blue tab = Spyder poolside cam.</p>
       <div class="legend legend-cats">
         <span><svg class="lgs" viewBox="-12 -12 24 24" aria-hidden="true" data-cat-icon="boatup"></svg>Boat-up</span>
         <span><svg class="lgs" viewBox="-12 -12 24 24" aria-hidden="true" data-cat-icon="lakeview"></svg>Lake view</span>
@@ -1549,6 +1551,20 @@ svg.leaflet-image-layer.leaflet-interactive path {
  *   any more: it was 1.7-12.7 km off. prec: poi | address | interpolated | street. approx=true -> "Location approximate".
  */
 const VENUES = [
+  /* ---- 11 Oct 2026 top-20 boat-up pass (see top20_boatup.md): verified boat-up venues WITHOUT a Spyder cam.
+   * cam:"" + noCam:true -> card shows "No cam"; no sample menu/events. Busyness is the same labeled sample. */
+  {"id": "shady", "category": "boatup", "catConf": "high", "catWhy": "Fall 2026 Harbor Hop (Lake of the Ozarks CVB, 10 Oct 2026) lists 'Shady Gators #1 & #2' as a 7 MM boat checkpoint. LakeOfTheOzarks.com waterfront listing tags it Mile Marker 7 + Boat Parking. LOZ Guide (2026): 'the lake's biggest Cajun bar with boat-up docks'.", "name": "Shady Gators", "area": "Lake Ozark", "mm": "7", "lat": 38.207368, "lng": -92.748026, "address": "132 Sweet William Rd, Lake Ozark, MO 65049", "addrSrc": "https://www.shadygators.com/", "coordSrc": "OSM venue point (Nominatim)", "prec": "poi", "approx": false, "cam": "", "noCam": true, "dockEvidence": false, "pool": false, "music": false, "specials": false, "info": {"website": "https://www.shadygators.com/", "phone": null, "hours": "Fri–Sun from 11 a.m. (fall 2026)", "src": {"url": "https://www.lakeexpo.com/boating/the_lake/whos-open-fall-hours-closing-dates-for-waterfront-restaurants/article_9526a53c-233a-46e8-9bea-45e69f46c662.html", "label": "Hours: LakeExpo fall hours list, 9 Oct 2026"}}},
+  {"id": "redhead", "category": "boatup", "catConf": "high", "catWhy": "Fall 2026 Harbor Hop boat checkpoint at 21 MM. LakeOfTheOzarks.com listing: Mile Marker 21, Boat Parking. LOZ Guide (June 2026): 'Staffed dock slips in Redhead Cove', pool and swim-up scene, open year-round.", "name": "Redhead Lakeside Grill", "area": "Osage Beach", "mm": "21", "lat": 38.140898, "lng": -92.697281, "address": "1700 Yacht Club Dr, Osage Beach, MO 65065", "addrSrc": "https://redheadlakesidegrill.com/contact/", "coordSrc": "OSM venue point (Nominatim)", "prec": "poi", "approx": false, "cam": "", "noCam": true, "dockEvidence": false, "pool": false, "music": false, "specials": false, "info": {"website": "https://redheadlakesidegrill.com/", "phone": null, "hours": "Daily from 11 a.m. (fall 2026)", "src": {"url": "https://www.lakeexpo.com/boating/the_lake/whos-open-fall-hours-closing-dates-for-waterfront-restaurants/article_9526a53c-233a-46e8-9bea-45e69f46c662.html", "label": "Hours: LakeExpo fall hours list, 9 Oct 2026"}}},
+  {"id": "ron", "category": "boatup", "catConf": "high", "catWhy": "Fall 2026 Harbor Hop lists 'Captain Ron's Bar & Grill #1 & #2' as a 34.5 MM boat checkpoint. LakeOfTheOzarks.com listing: Mile Marker 34, Boat Parking. LOZ Guide (June 2026): two private swim beaches, boat-up docks.", "name": "Captain Ron's", "area": "Sunrise Beach", "mm": "34.5", "lat": 38.12863, "lng": -92.792014, "address": "82 Aloha Ln., Sunrise Beach, MO 65079", "addrSrc": "https://captainronsatthelake.com/", "coordSrc": "OSM venue point (Nominatim)", "prec": "poi", "approx": false, "cam": "", "noCam": true, "dockEvidence": false, "pool": false, "music": false, "specials": false, "info": {"website": "https://captainronsatthelake.com/", "phone": null, "hours": "Thu–Sun from 11 a.m. (fall 2026)", "src": {"url": "https://www.lakeexpo.com/boating/the_lake/whos-open-fall-hours-closing-dates-for-waterfront-restaurants/article_9526a53c-233a-46e8-9bea-45e69f46c662.html", "label": "Hours: LakeExpo fall hours list, 9 Oct 2026"}}},
+  {"id": "htoad", "category": "boatup", "catConf": "high", "catWhy": "htoads.com: 'Come by boat at the 7 Mile Marker on the Main Channel, or by car on Bittersweet Road'; swim-up bar and live-music stage. Fall 2026 Harbor Hop lists 'Camden on the Lake/Horny Toad Complex #1 & #2' at 7 MM.", "name": "H. Toad's Bar & Grill", "area": "Lake Ozark (Camden on the Lake)", "mm": "7", "lat": 38.205753, "lng": -92.7479411, "address": "2325 Bittersweet Rd, Lake Ozark, MO 65049", "addrSrc": "https://htoads.com/", "coordSrc": "OSM venue point (Nominatim, way 912123749)", "prec": "poi", "approx": false, "cam": "", "noCam": true, "dockEvidence": false, "pool": false, "music": false, "specials": false, "info": {"website": "https://htoads.com/", "phone": null, "hours": "Daily from 7 a.m. (fall 2026)", "src": {"url": "https://www.lakeexpo.com/boating/the_lake/whos-open-fall-hours-closing-dates-for-waterfront-restaurants/article_9526a53c-233a-46e8-9bea-45e69f46c662.html", "label": "Hours: LakeExpo fall hours list, 9 Oct 2026"}}},
+  {"id": "shorty", "category": "boatup", "catConf": "high", "catWhy": "shortypantslounge.com: 'Boat Up and Relax'; marina 'at 21MM in Salt Hollow Cove' with gas dock; 'just pull up, tie off, and come on in'. Fall 2026 Harbor Hop checkpoint at 21 MM (Woodland Cove).", "name": "Shorty Pants Lounge & Marina", "area": "Osage Beach", "mm": "21", "lat": 38.1433095, "lng": -92.6905593, "address": "1680 Autumn Lane, Osage Beach, MO 65065", "addrSrc": "https://shortypantslounge.com/marina/", "coordSrc": "OSM venue point (Nominatim, node 14144941038)", "prec": "poi", "approx": false, "cam": "", "noCam": true, "dockEvidence": false, "pool": false, "music": false, "specials": false, "info": {"website": "https://shortypantslounge.com/", "phone": null, "hours": "Daily from 11 a.m. (fall 2026)", "src": {"url": "https://www.lakeexpo.com/boating/the_lake/whos-open-fall-hours-closing-dates-for-waterfront-restaurants/article_9526a53c-233a-46e8-9bea-45e69f46c662.html", "label": "Hours: LakeExpo fall hours list, 9 Oct 2026"}}},
+  {"id": "landshark", "category": "boatup", "catConf": "high", "catWhy": "Margaritaville Lake Resort FAQ: 'located at Mile Marker 26 ... and offers complimentary boat docking'. Fall 2026 Harbor Hop checkpoint at 26 MM.", "name": "LandShark Bar & Grill (Margaritaville)", "area": "Osage Beach", "mm": "26", "lat": 38.1257172, "lng": -92.7184155, "address": "494 Tan Tar A Drive, Osage Beach, MO 65065", "addrSrc": "https://lakeoftheozarks.landsharkbarandgrill.com/", "coordSrc": "OSM venue point (Nominatim, way 932434062 'Landshark Bar & Grill')", "prec": "poi", "approx": false, "cam": "", "noCam": true, "dockEvidence": false, "pool": false, "music": false, "specials": false, "info": {"website": "https://lakeoftheozarks.landsharkbarandgrill.com/", "phone": null, "hours": "Daily from 11 a.m. (fall 2026)", "src": {"url": "https://www.lakeexpo.com/boating/the_lake/whos-open-fall-hours-closing-dates-for-waterfront-restaurants/article_9526a53c-233a-46e8-9bea-45e69f46c662.html", "label": "Hours: LakeExpo fall hours list, 9 Oct 2026"}}},
+  {"id": "coconuts", "category": "boatup", "catConf": "medium", "catWhy": "Fall 2026 Harbor Hop boat checkpoint at 7 MM Gravois. LakeOfTheOzarks.com listing: Gravois Arm MM7, Boat Parking. coconutsatthelake.com describes swim-up pool bars; it does not itself describe docking.", "name": "Coconuts Caribbean Beach Bar & Grill", "area": "Gravois Mills (Gravois Arm)", "mm": "7 (Gravois Arm)", "lat": 38.290898, "lng": -92.798673, "address": "15208 Red Hollow Rd., Gravois Mills, MO 65037", "addrSrc": "https://funlake.com/dining/all-dining?rec=231", "coordSrc": "OSM venue point (Nominatim)", "prec": "poi", "approx": false, "cam": "", "noCam": true, "dockEvidence": false, "pool": false, "music": false, "specials": false, "info": {"website": "https://www.coconutsatthelake.com/", "phone": null, "hours": "Fri–Sun from 11 a.m. (fall 2026)", "src": {"url": "https://www.lakeexpo.com/boating/the_lake/whos-open-fall-hours-closing-dates-for-waterfront-restaurants/article_9526a53c-233a-46e8-9bea-45e69f46c662.html", "label": "Hours: LakeExpo fall hours list, 9 Oct 2026"}}},
+  {"id": "franky", "category": "boatup", "catConf": "high", "catWhy": "Fall 2026 Harbor Hop lists 'Franky & Louie's Beachfront Bar & Grill #1 & #2' as a 10 MM (Lynch Cove) boat checkpoint. LOZ Guide (June 2026): beach, pool, gas dock, 'a classic day-trip by boat'. SHORE Magazine (May 2025): 'Mile Marker 10 by water'.", "name": "Franky & Louie's", "area": "Sunrise Beach", "mm": "10", "lat": 38.159313, "lng": -92.75634, "address": "1028 Deer Valley Rd, Sunrise Beach, MO 65079", "addrSrc": "https://www.frankyandlouies.com/", "coordSrc": "OSM venue point (Nominatim)", "prec": "poi", "approx": false, "cam": "", "noCam": true, "dockEvidence": false, "pool": false, "music": false, "specials": false, "info": {"website": "https://www.frankyandlouies.com/", "phone": null, "hours": "Fri–Sun from 11 a.m. (fall 2026)", "src": {"url": "https://www.lakeexpo.com/boating/the_lake/whos-open-fall-hours-closing-dates-for-waterfront-restaurants/article_9526a53c-233a-46e8-9bea-45e69f46c662.html", "label": "Hours: LakeExpo fall hours list, 9 Oct 2026"}}},
+  {"id": "boathouse", "category": "boatup", "catConf": "high", "catWhy": "boathouselakeozark.com: '40+ covered boat slips'; 'Guest slips are primarily on B Dock'; '3 Mile Marker North shore · Village Marina'; pool + swim-up bar. Fall 2026 Harbor Hop checkpoint at 3 MM (Jobson Hollow Cove).", "name": "Boathouse Lakeside Bar & Grill", "area": "Eldon (Village Marina, Jobson Hollow Cove)", "mm": "3", "lat": 38.2320822, "lng": -92.6660712, "address": "107 Village Marina Road, Eldon, MO", "addrSrc": "https://boathouselakeozark.com/", "coordSrc": "Street-level geocode only (Nominatim, OSM way 18588706 'Village Marina Road')", "prec": "street", "approx": true, "cam": "", "noCam": true, "dockEvidence": false, "pool": false, "music": false, "specials": false, "info": {"website": "https://boathouselakeozark.com/", "phone": null, "hours": "Fri–Sun from 11 a.m.; 2026 season ends Sun 11 Oct, reopens last weekend of April 2027 (venue site)", "src": {"url": "https://www.lakeexpo.com/boating/the_lake/whos-open-fall-hours-closing-dates-for-waterfront-restaurants/article_9526a53c-233a-46e8-9bea-45e69f46c662.html", "label": "Hours: LakeExpo fall hours list, 9 Oct 2026"}}},
+  {"id": "tapgrill", "category": "boatup", "catConf": "medium", "catWhy": "tapandgrillatthelake.com/about: 'Located on the water at the 6.5mm on the main channel inside Millstone Marina'; adult pool. Fall 2026 Harbor Hop checkpoint at 6.5 MM. Diner slip rules not published.", "name": "Tap & Grill Lakeside Brew Haus", "area": "Gravois Mills (Millstone Marina)", "mm": "6.5", "lat": 38.2197536, "lng": -92.7508373, "address": "31959 Dunwandrin Rd, Gravois Mills, MO 65037", "addrSrc": "https://www.openstreetmap.org/node/14123274157", "coordSrc": "OSM venue point (Nominatim name search, node 14123274157); street address is from OSM, not printed on the venue site", "prec": "poi", "approx": false, "cam": "", "noCam": true, "dockEvidence": false, "pool": false, "music": false, "specials": false, "info": {"website": "https://www.tapandgrillatthelake.com/", "phone": null, "hours": "Fri–Sun from 11 a.m., Mon & Thu from 5 p.m. (fall 2026)", "src": {"url": "https://www.lakeexpo.com/boating/the_lake/whos-open-fall-hours-closing-dates-for-waterfront-restaurants/article_9526a53c-233a-46e8-9bea-45e69f46c662.html", "label": "Hours: LakeExpo fall hours list, 9 Oct 2026"}}},
+  {"id": "docknock", "category": "boatup", "catConf": "medium", "catWhy": "LakeOfTheOzarks.com waterfront listing: Mile Marker 4. Restaurantji summary: 'plenty of boat parking ... near 4MM'; a July 2026 review there: 'New docks'. Not a Harbor Hop 2026 checkpoint; no official website found.", "name": "Docknockers", "area": "Lake Ozark", "mm": "4", "lat": 38.2132803, "lng": -92.7005774, "address": "245 Wheel House Ct., Lake Ozark, MO 65049", "addrSrc": "https://www.restaurantji.com/mo/lake-ozark/docknockers-/", "coordSrc": "OSM venue point (Nominatim, node 14119791783 'Docknockers Original')", "prec": "poi", "approx": false, "cam": "", "noCam": true, "dockEvidence": false, "pool": false, "music": false, "specials": false, "info": {"website": null, "phone": null, "hours": "Tue–Thu from 4 p.m., Fri–Sun from 11 a.m. (fall 2026)", "src": {"url": "https://www.lakeexpo.com/boating/the_lake/whos-open-fall-hours-closing-dates-for-waterfront-restaurants/article_9526a53c-233a-46e8-9bea-45e69f46c662.html", "label": "Hours: LakeExpo fall hours list, 9 Oct 2026"}}},
+  {"id": "bulldog", "category": "boatup", "catConf": "medium", "catWhy": "Fall 2026 Harbor Hop boat checkpoint at 33 MM. LOZ Guide (June 2026): 'Ample dock space'. The venue site itself does not mention docks.", "name": "Bulldog's Beach House", "area": "Camdenton", "mm": "33", "lat": 38.101106, "lng": -92.791077, "address": "121 Teton Lane, Camdenton, MO 65020", "addrSrc": "https://bulldogsbeachhouse.com/", "coordSrc": "exa.ai place listing (Teton Lane is not in OpenStreetMap, so Nominatim could not geocode it)", "prec": "listing", "approx": true, "cam": "", "noCam": true, "dockEvidence": false, "pool": false, "music": false, "specials": false, "info": {"website": "https://bulldogsbeachhouse.com/", "phone": null, "hours": "Thu from 4 p.m., Fri–Sun from 12 p.m. (fall 2026)", "src": {"url": "https://www.lakeexpo.com/boating/the_lake/whos-open-fall-hours-closing-dates-for-waterfront-restaurants/article_9526a53c-233a-46e8-9bea-45e69f46c662.html", "label": "Hours: LakeExpo fall hours list, 9 Oct 2026"}}},
   {id:"bwj", category:"boatup", catConf:"high", catWhy:"Spyder dock cams (main dock; Dock 2 'boat parking dock') plus a poolside pool cam and live-music stage cam. backwaterjacks.com: pool parties, Level5 pools with swim-up bars, 'The Ultimate Lakefront Music Experience'.",
     name:"Backwater Jack's", area:"Osage Beach", mm:"17.7", lat:38.154372, lng:-92.623979,
     address:"4341 Beach Drive, Osage Beach, MO 65065", addrSrc:"https://backwaterjacks.com/", coordSrc:"OSM venue point (Nominatim)", prec:"poi", approx:false,
@@ -1641,7 +1657,8 @@ VENUES.forEach(v => {
   v.info = { website: r.website, phone: r.phone, hours: r.hours, src: r.src.info };
 });
 
-/* CSV also has 5 venues with no public cam — not mapped (they have geocoded lat/lng in the CSV since 5 Oct):
+/* 11 Oct 2026: the 5 no-cam CSV venues below are now pinned as boat-up (top-20 pass), plus 7 new no-cam venues.
+   Earlier note: CSV also had 5 venues with no public cam (geocoded lat/lng in the CSV since 5 Oct):
    Shady Gators, Coconuts, Redhead Lakeside Grill, Franky & Louie's, Captain Ron's.
    5 Oct 2026 re-audit added Angels + The Hatch (both have cams + Spyder coords).
    5 Oct 2026 pool-cam pass added Alhonna Resort & Marina (2 poolside cams) and surfaced Encore's pool cam. */
@@ -1832,7 +1849,7 @@ let openId = null;
 let selectedId = null;
 
 function matchesFilter(v, f) {
-  if (!v.cam) return false;
+  if (v.lat == null) return false;
   if (f === "boatup" || f === "lakeview" || f === "offwater") return v.category === f;
   if (f === "dock") return !!v.dockEvidence;
   if (f === "pool") return !!(v.poolCams && v.poolCams.length);
@@ -1880,7 +1897,7 @@ function catIcon(cat) { return catShape(cat, 10.5, "kshape") + catGlyph(cat, 10.
  * spots once the map is zoomed in far enough to separate them. Coordinates are never changed. */
 function computeFan(z, ps) {
   const map = mapView.map;
-  const pts = VENUES.filter(v => v.cam && v.lat != null).map(v => ({ v, p: map.project([v.lat, v.lng], z) }));
+  const pts = VENUES.filter(v => v.lat != null).map(v => ({ v, p: map.project([v.lat, v.lng], z) }));
   const TH = 24 * ps, parent = pts.map((_, i) => i);
   const find = i => parent[i] === i ? i : (parent[i] = find(parent[i]));
   for (let i = 0; i < pts.length; i++) for (let j = i + 1; j < pts.length; j++)
@@ -1962,7 +1979,7 @@ function drawMap() {
   if (!MAP_READY) return;
   const map = mapView.map, ps = mapView.pinScale(), layer = mapView.pins;
   const plotted = VENUES.filter(matches);
-  const allCam = VENUES.filter(v => v.cam && v.lat != null);
+  const allCam = VENUES.filter(v => v.lat != null);
   const fan = computeFan(map.getZoom(), ps);
   layer.clearLayers();
   LANDMARKS.forEach(l => {
@@ -2014,7 +2031,7 @@ function renderList() {
     const bits = [];
     if (v.mm) bits.push("MM " + v.mm);
     bits.push(v.area);
-    bits.push("Cam");
+    bits.push(v.cam ? "Cam" : "No cam");
     if (v.dockEvidence) bits.push("Dock cam in Spyder index");
     const tags = [];
     if (CATS[v.category]) tags.push(CATS[v.category].label + (v.catConf === "low" ? " (evidence limited)" : ""));
@@ -2055,7 +2072,7 @@ const DOCK_CAMS = {
   hatch: [{label:"Dock & lake", url:"https://spydernetwork.com/cams/the-hatch"}]
 };
 function camTopBlock(v) {
-  if (!v.cam) return '<div class="cam-top"><p class="nocam">No public cam found.</p></div>';
+  if (!v.cam) return '<div class="cam-top"><p class="nocam"><b class="nocam-badge">No cam</b> No public SpyderNetwork cam for this venue (checked 11 Oct 2026).</p></div>';
   const ext = ' target="_blank" rel="noopener noreferrer"';
   const pools = v.poolCams || [], docks = v.dockCams || DOCK_CAMS[v.id] || [];
   const mainPool = pools.find(c => c.url === v.cam), mainDock = docks.find(c => c.url === v.cam);
@@ -2095,6 +2112,7 @@ function sampleEvents(v) {
 }
 function eventsBlock(v) {
   const real = Array.isArray(v.events) && v.events.length > 0;
+  if (!real && v.noCam) return ''; // top-20 no-cam venues: no fabricated events
   const evs = real ? v.events : sampleEvents(v);
   const cards = evs.map(e => {
     const dt = new Date(e.date + "T12:00:00Z");
@@ -2169,6 +2187,7 @@ function sampleMenu(v) {
 function menuBlock(v) {
   const m = v.menu || {};
   const real = (Array.isArray(m.items) && m.items.length > 0) || !!m.url;
+  if (!real && v.noCam) return ''; // top-20 no-cam venues: no fabricated menu
   const menu = real ? m : sampleMenu(v);
   const items = menu.items || [];
   let lastSec = null;
@@ -2212,7 +2231,7 @@ function openVenue(id) {
     + entertainmentBlock(v)
     + adSlot()
     + '<div class="block"><h3>Location</h3><p>'+escapeHtml(v.address || "Street address not verified")+'</p>'
-    + (v.approx ? '<p class="approx-flag">Location approximate — '+(v.prec === "street" ? 'street-level geocode only (no house-number point)' : 'address not verified')+'</p>' : '')
+    + (v.approx ? '<p class="approx-flag">Location approximate — '+(v.prec === "street" ? 'street-level geocode only (no house-number point)' : v.prec === "listing" ? 'pin from a third-party place listing (street not in OpenStreetMap)' : 'address not verified')+'</p>' : '')
     + '<p class="fine" style="margin-top:6px">Pin: '+escapeHtml(v.coordSrc || "")+'. Address source: '
     + (v.addrSrc ? '<a href="'+v.addrSrc+'" target="_blank" rel="noopener noreferrer" style="color:var(--muted)">'+escapeHtml(v.addrSrc.replace(/^https?:\/\/(www\.)?/, "").split("/")[0])+'</a>' : 'none')
     + '. See venues.csv coord_source.</p>'
@@ -2531,6 +2550,41 @@ const ESRI_TILES = "https://server.arcgisonline.com/ArcGIS/rest/services/";
 const CARTO_KEY = "";
 const CARTO_TILES = "https://{s}.basemaps.cartocdn.com/{style}/{z}/{x}/{y}{r}.png"; // CARTO Positron / Dark Matter: free with OSM + CARTO attribution, no key
 const LABELS_KEY = "lakeRadar.mapLabels";
+/* Water tint: the Esri Canvas gray basemaps paint water as one flat gray (Light ~rgb(208,207,212),
+ * Dark ~rgb(35,34,39), slightly bluish). Each base tile is drawn to a canvas and only pixels close to that
+ * water gray are recoloured: faint blue in Sun, dark navy in Night. Land, roads and labels are untouched.
+ * Needs CORS tiles (crossOrigin); if the canvas is tainted the plain tile is shown instead. */
+const WATER = {
+  Light: { ref: [208, 207, 212], to: [212, 228, 242], tol: 10 },
+  Dark:  { ref: [35, 34, 39],   to: [22, 36, 60],    tol: 8 }
+};
+const WaterTintLayer = L.TileLayer.extend({
+  createTile(coords, done) {
+    const c = document.createElement("canvas"), img = new Image(), w = WATER[this.options.tone];
+    c.width = c.height = 256; c.setAttribute("role", "presentation");
+    img.crossOrigin = "anonymous";
+    img.onload = () => {
+      const ctx = c.getContext("2d", { willReadFrequently: true });
+      ctx.drawImage(img, 0, 0, 256, 256);
+      try {
+        const d = ctx.getImageData(0, 0, 256, 256), px = d.data, [rr, rg, rb] = w.ref, [tr, tg, tb] = w.to, tol = w.tol;
+        for (let i = 0; i < px.length; i += 4) {
+          const r = px[i], g = px[i + 1], b = px[i + 2];
+          const dist = Math.max(Math.abs(r - rr), Math.abs(g - rg), Math.abs(b - rb));
+          if (dist <= tol && b >= r) {
+            const k = dist <= tol / 2 ? 1 : 1 - (dist - tol / 2) / (tol / 2); // soft edge for JPEG fringes
+            px[i] = r + (tr - rr) * k; px[i + 1] = g + (tg - rg) * k; px[i + 2] = b + (tb - rb) * k;
+          }
+        }
+        ctx.putImageData(d, 0, 0);
+      } catch (_) { /* tainted canvas: keep untinted tile */ }
+      done(null, c);
+    };
+    img.onerror = (e) => done(e, c);
+    img.src = this.getTileUrl(coords);
+    return c;
+  }
+});
 const mapView = (() => {
   const el = document.getElementById("map");
   const map = L.map(el, { zoomControl: false, attributionControl: false, zoomSnap: 0.5, zoomDelta: 1, wheelPxPerZoomLevel: 90,
@@ -2539,7 +2593,7 @@ const mapView = (() => {
   const carto = (style) => L.tileLayer(CARTO_TILES.replace("{style}", style) + "?key=" + encodeURIComponent(CARTO_KEY), { crossOrigin: "anonymous", subdomains: "abcd", maxNativeZoom: 19, maxZoom: 19, keepBuffer: 3 });
   // Keyless fallback: Esri Canvas Light/Dark Gray (same free Esri service the old imagery used) + its light place-name reference
   const canvas = (tone) => L.layerGroup([
-    L.tileLayer(ESRI_TILES + "Canvas/World_" + tone + "_Gray_Base/MapServer/tile/{z}/{y}/{x}", { crossOrigin: "anonymous", maxNativeZoom: 16, maxZoom: 19, keepBuffer: 3 }),
+    new WaterTintLayer(ESRI_TILES + "Canvas/World_" + tone + "_Gray_Base/MapServer/tile/{z}/{y}/{x}", { tone, crossOrigin: "anonymous", maxNativeZoom: 16, maxZoom: 19, keepBuffer: 3 }),
     L.tileLayer(ESRI_TILES + "Canvas/World_" + tone + "_Gray_Reference/MapServer/tile/{z}/{y}/{x}", { crossOrigin: "anonymous", maxNativeZoom: 16, maxZoom: 19, pane: "reflabels" })]);
   map.createPane("reflabels"); map.getPane("reflabels").style.zIndex = 350;
   const base = CARTO_KEY ? { sun: carto("light_all"), night: carto("dark_all") } : { sun: canvas("Light"), night: canvas("Dark") };
@@ -2572,7 +2626,7 @@ const mapView = (() => {
 
   function pinScale() { return document.documentElement.dataset.theme === "sun" ? 1.12 : 1; } // Sun: 30% bigger pins
   function homeBounds() {
-    return L.latLngBounds(VENUES.filter(v => v.cam && v.lat != null).map(v => [v.lat, v.lng]).concat(LANDMARKS.map(l => [l.lat, l.lng])));
+    return L.latLngBounds(VENUES.filter(v => v.lat != null).map(v => [v.lat, v.lng]).concat(LANDMARKS.map(l => [l.lat, l.lng])));
   }
   function reset(animate) { // initial view = every cam pin (+ Bagnell Dam) inside the stage, clear of the Key button, location button and footer
     const sun = pinScale() > 1;
