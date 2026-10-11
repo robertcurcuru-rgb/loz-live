@@ -5,6 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#000000">
 <title>LOZ Live — map demo</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="LOZ Live">
 <style>
 /* required styles */
 
@@ -1386,6 +1393,13 @@ svg.leaflet-image-layer.leaflet-interactive path {
   .map-attrib, html[data-theme="sun"] .map-attrib { right: auto; left: calc(env(safe-area-inset-left) + 10px); bottom: calc(env(safe-area-inset-bottom) + 118px); }
   .about-key-h { margin: 6px 0 6px; font-size: 15px; }
   .map-key.about-key, html[data-theme] .map-key.about-key { position: static; width: auto; max-width: none; max-height: none; margin-bottom: 12px; box-shadow: none; }
+
+  /* iOS install hint */
+  .a2hs { position: fixed; z-index: 20; left: 10px; right: 10px; top: calc(env(safe-area-inset-top) + 60px); display: flex; align-items: center; gap: 8px;
+    padding: 8px 6px 8px 14px; border-radius: 14px; background: #0e74b8; color: #fff; font-size: 13.5px; box-shadow: 0 2px 10px rgba(0,0,0,.25); }
+  .a2hs[hidden] { display: none; }
+  .a2hs span { flex: 1; } .a2hs svg { vertical-align: -2px; }
+  .a2hs button { border: 0; background: none; color: #fff; font-size: 22px; min-width: 40px; min-height: 36px; }
 </style>
 <link rel="icon" href="data:,">
 </head>
@@ -2522,11 +2536,11 @@ const mapView = (() => {
   const map = L.map(el, { zoomControl: false, attributionControl: false, zoomSnap: 0.5, zoomDelta: 1, wheelPxPerZoomLevel: 90,
     minZoom: 9, maxZoom: 19, maxBounds: [[37.7, -93.3], [38.6, -92.1]], maxBoundsViscosity: 0.9, bounceAtZoomLimits: false,
     keyboardPanDelta: 60, tapTolerance: 12 });
-  const carto = (style) => L.tileLayer(CARTO_TILES.replace("{style}", style) + "?key=" + encodeURIComponent(CARTO_KEY), { subdomains: "abcd", maxNativeZoom: 19, maxZoom: 19, keepBuffer: 3 });
+  const carto = (style) => L.tileLayer(CARTO_TILES.replace("{style}", style) + "?key=" + encodeURIComponent(CARTO_KEY), { crossOrigin: "anonymous", subdomains: "abcd", maxNativeZoom: 19, maxZoom: 19, keepBuffer: 3 });
   // Keyless fallback: Esri Canvas Light/Dark Gray (same free Esri service the old imagery used) + its light place-name reference
   const canvas = (tone) => L.layerGroup([
-    L.tileLayer(ESRI_TILES + "Canvas/World_" + tone + "_Gray_Base/MapServer/tile/{z}/{y}/{x}", { maxNativeZoom: 16, maxZoom: 19, keepBuffer: 3 }),
-    L.tileLayer(ESRI_TILES + "Canvas/World_" + tone + "_Gray_Reference/MapServer/tile/{z}/{y}/{x}", { maxNativeZoom: 16, maxZoom: 19, pane: "reflabels" })]);
+    L.tileLayer(ESRI_TILES + "Canvas/World_" + tone + "_Gray_Base/MapServer/tile/{z}/{y}/{x}", { crossOrigin: "anonymous", maxNativeZoom: 16, maxZoom: 19, keepBuffer: 3 }),
+    L.tileLayer(ESRI_TILES + "Canvas/World_" + tone + "_Gray_Reference/MapServer/tile/{z}/{y}/{x}", { crossOrigin: "anonymous", maxNativeZoom: 16, maxZoom: 19, pane: "reflabels" })]);
   map.createPane("reflabels"); map.getPane("reflabels").style.zIndex = 350;
   const base = CARTO_KEY ? { sun: carto("light_all"), night: carto("dark_all") } : { sun: canvas("Light"), night: canvas("Dark") };
   const ab = document.getElementById("mapAttrib");
@@ -2542,8 +2556,8 @@ const mapView = (() => {
   }
   setBase(document.documentElement.dataset.theme);
   const labels = L.layerGroup([
-    L.tileLayer(ESRI_TILES + "Reference/World_Transportation/MapServer/tile/{z}/{y}/{x}", { pane: "reflabels", maxNativeZoom: 18, maxZoom: 19, opacity: 0.7 }),
-    L.tileLayer(ESRI_TILES + "Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}", { pane: "reflabels", maxNativeZoom: 18, maxZoom: 19, opacity: 0.95 })
+    L.tileLayer(ESRI_TILES + "Reference/World_Transportation/MapServer/tile/{z}/{y}/{x}", { crossOrigin: "anonymous", pane: "reflabels", maxNativeZoom: 18, maxZoom: 19, opacity: 0.7 }),
+    L.tileLayer(ESRI_TILES + "Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}", { crossOrigin: "anonymous", pane: "reflabels", maxNativeZoom: 18, maxZoom: 19, opacity: 0.95 })
   ]);
   let labelsOn = false; try { labelsOn = localStorage.getItem(LABELS_KEY) === "1"; } catch (_) {}
   function setLabels(on) {
@@ -2696,6 +2710,27 @@ document.getElementById("modeToggle").addEventListener("click", (e) => {
 applyMode();
 
 setInterval(() => { applyMode(); render(); }, 60000); // auto sunrise/sunset switch + sample "now" hour rollover
+</script>
+<div class="a2hs" id="a2hs" hidden role="note">
+  <span>Install LOZ Live: tap <b>Share</b> <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 12v8h14v-8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> then <b>Add to Home Screen</b></span>
+  <button type="button" id="a2hsClose" aria-label="Dismiss install hint">×</button>
+</div>
+<script>
+/* PWA: service worker + one-time iOS Safari "Add to Home Screen" hint */
+if ("serviceWorker" in navigator && location.protocol !== "file:") {
+  window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js", { scope: "./" }).catch(() => {}));
+}
+(function () {
+  const KEY = "lozLive.a2hsHintSeen";
+  const ua = navigator.userAgent, ios = /iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
+  const safari = /Safari/.test(ua) && !/CriOS|FxiOS|EdgiOS|OPiOS|GSA\//.test(ua);
+  const standalone = navigator.standalone === true || matchMedia("(display-mode: standalone)").matches;
+  let seen = false; try { seen = localStorage.getItem(KEY) === "1"; } catch (_) {}
+  const el = document.getElementById("a2hs");
+  if (!ios || !safari || standalone || seen) return;
+  el.hidden = false;
+  document.getElementById("a2hsClose").onclick = () => { el.hidden = true; try { localStorage.setItem(KEY, "1"); } catch (_) {} };
+})();
 </script>
 </body>
 </html>
