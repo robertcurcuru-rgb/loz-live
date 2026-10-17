@@ -1,5 +1,5 @@
 /* LOZ Live service worker. Bump VERSION on every deploy that changes the app shell. */
-const VERSION = "v9-2026-10-15";
+const VERSION = "v10-2026-10-17";
 const SHELL = "loz-shell-" + VERSION;
 const TILES = "loz-tiles-v1";          // runtime map-tile cache (survives shell bumps)
 const TILE_MAX = 400;                  // size cap (entries); oldest evicted first
