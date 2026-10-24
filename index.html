@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="LOZ Live: Lake of the Ozarks bars and boat docks on a live map, with Spyder cams, busyness, menus and events.">
 <meta name="theme-color" content="#000000">
 <title>LOZ Live — map demo</title>
 <link rel="manifest" href="manifest.webmanifest">
@@ -1405,6 +1406,51 @@ svg.leaflet-image-layer.leaflet-interactive path {
   .a2hs button { border: 0; background: none; color: #fff; font-size: 22px; min-width: 40px; min-height: 36px; }
 
   .nocam-badge { display: inline-block; margin-right: 6px; padding: 2px 8px; border-radius: 999px; background: #4b5563; color: #fff; font-size: 12px; letter-spacing: .02em; }
+
+  /* ---- mobile-audit fixes (44px tap targets, overscroll) ---- */
+  html, body { overscroll-behavior: none; -webkit-text-size-adjust: 100%; }
+  .mode-toggle button { position: relative; }
+  .mode-toggle button::after { content: ""; position: absolute; left: 50%; top: 50%; width: max(100%, 44px); height: 44px; transform: translate(-50%, -50%); }
+  .zoom-ctl button, html[data-theme="sun"] .zoom-ctl button { min-width: 44px; min-height: 44px; }
+  .geo-fab, html[data-theme="sun"] .geo-fab, .map-actions button, .map-footer button { min-height: 44px; }
+  .map-attrib a { display: inline-block; padding: 14px 4px; margin: -14px 0; }
+  .a2hs button { min-width: 44px; min-height: 44px; }
+
+  /* ---- landscape-fix: slightly darker land shading (tile pane only; labels pane untouched) ---- */
+  /* saturate() only affects coloured pixels: the gray-canvas land is neutral so it stays gray, the blue-gray water gets bluer */
+  #map .leaflet-tile-pane, html[data-theme="sun"] #map .leaflet-tile-pane { filter: brightness(.93) contrast(1.1) saturate(1.9); }
+  html[data-theme="night"] #map .leaflet-tile-pane { filter: brightness(1.2) contrast(1.02) saturate(2.2); }
+  /* zoomed out (z<=12) the lake is thin lines, so push the blue harder there to match the z13 sky-blue look */
+  #map.z-out .leaflet-tile-pane, html[data-theme="sun"] #map.z-out .leaflet-tile-pane { filter: brightness(.93) contrast(1.1) saturate(2.8); }
+  html[data-theme="night"] #map.z-out .leaflet-tile-pane { filter: brightness(1.15) contrast(1.04) saturate(2.2); }
+
+  /* ---- landscape-fix: trimmer legend + collapsible Key on short screens ---- */
+  .lg-toggle { display: none; }
+  .map-footer, html[data-theme="sun"] .map-footer, html[data-theme="night"] .map-footer { padding: 6px 6px 6px 12px; }
+  .map-legend { gap: 4px; padding: 0 0 5px; margin-bottom: 5px; }
+  .lg-row { font-size: 11.5px; }
+  .lg-k svg { width: 16px; height: 16px; }
+  .map-actions .count, html[data-theme="sun"] .map-actions .count { font-size: 13px; }
+  .map-actions button, .map-footer button { padding: 6px 14px; }
+  .lg-sample { font-weight: 500; opacity: .75; }
+  @media (orientation: landscape) and (max-height: 500px), (max-height: 560px) {
+    .lg-toggle { display: inline-flex; align-items: center; }
+    .map-footer, html[data-theme="sun"] .map-footer, html[data-theme="night"] .map-footer {
+      left: auto; right: calc(env(safe-area-inset-right) + 8px); bottom: calc(env(safe-area-inset-bottom) + 6px);
+      max-width: min(560px, calc(100% - 16px)); padding: 4px 4px 4px 12px; border-radius: 22px; }
+    .map-footer:not(.lg-open) .map-legend { display: none; }
+    .map-footer.lg-open .map-legend { margin-bottom: 4px; padding-top: 4px; }
+    .map-footer .lg-row { flex-wrap: wrap; justify-content: flex-start; gap: 3px 12px; }
+    .map-actions { gap: 6px; }
+    .map-actions .count, html[data-theme="sun"] .map-actions .count { font-size: 12.5px; }
+    .map-actions button, .map-footer button { min-height: 44px; padding: 4px 12px; font-size: 13.5px; }
+    .lg-toggle[aria-expanded="true"] { border-color: currentColor; }
+    .zoom-ctl, html[data-theme="sun"] .zoom-ctl { bottom: calc(env(safe-area-inset-bottom) + 62px); }
+    .zoom-ctl .zl { display: none; }
+    .geo-fab, html[data-theme="sun"] .geo-fab { bottom: calc(env(safe-area-inset-bottom) + 8px); left: calc(env(safe-area-inset-left) + 8px); }
+    .map-attrib, html[data-theme="sun"] .map-attrib { left: calc(env(safe-area-inset-left) + 8px); bottom: calc(env(safe-area-inset-bottom) + 58px); }
+    .a2hs { left: auto; right: calc(env(safe-area-inset-right) + 70px); max-width: 420px; top: calc(env(safe-area-inset-top) + 56px); }
+  }
 </style>
 <link rel="icon" href="data:,">
 </head>
@@ -1444,6 +1490,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
       <div class="map-legend" id="mapLegend" aria-label="Map key"></div>
       <div class="map-actions">
       <div class="count" id="mapCount"></div>
+      <button class="ghost lg-toggle" id="legendBtn" type="button" aria-expanded="false" aria-controls="mapLegend">Key</button>
       <button class="ghost" id="aboutBtn2" type="button">About</button>
       <button class="solid" id="listBtn2" type="button">List</button>
       </div>
@@ -1906,7 +1953,8 @@ function computeFan(z, ps) {
   const groups = {};
   pts.forEach((a, i) => (groups[find(i)] = groups[find(i)] || []).push(a));
   const fan = {};
-  Object.values(groups).filter(g => g.length > 1).forEach(g => {
+  const maxFan = z >= 12 ? 8 : 4; // landscape-fix: at overview zooms only small clusters fan out, so no long starburst leaders
+  Object.values(groups).filter(g => g.length > 1 && g.length <= maxFan).forEach(g => {
     g.sort((a, b) => a.v.lng - b.v.lng || a.v.lat - b.v.lat);
     const cx = g.reduce((t, a) => t + a.p.x, 0) / g.length, cy = g.reduce((t, a) => t + a.p.y, 0) / g.length;
     const R = Math.max(30, 13 * g.length) * ps;
@@ -2591,7 +2639,11 @@ const mapView = (() => {
   }
   function reset(animate) { // initial view = every cam pin (+ Bagnell Dam) inside the stage, clear of the Key button, location button and footer
     const sun = pinScale() > 1;
-    map.fitBounds(homeBounds(), { paddingTopLeft: [24, 76], paddingBottomRight: [64, 200], maxZoom: 14, animate: animate !== false });
+    const st = el.getBoundingClientRect(), hd = document.querySelector("header .head-row"), ft = document.querySelector(".map-footer");
+    const top = hd ? Math.max(60, hd.getBoundingClientRect().bottom - st.top + 14) : 76;
+    const bot = ft ? Math.max(70, st.bottom - ft.getBoundingClientRect().top + (st.height < 560 ? 12 : 64)) : 200;
+    const side = st.width > st.height ? 64 : 24; // landscape: keep pins clear of the right-hand zoom buttons
+    map.fitBounds(homeBounds(), { paddingTopLeft: [side, top], paddingBottomRight: [64, bot], maxZoom: 14, animate: animate !== false });
   }
   function updateCtl() {
     const z = map.getZoom();
@@ -2599,6 +2651,8 @@ const mapView = (() => {
     zin.disabled = z >= map.getMaxZoom() - 1e-6;
     zout.disabled = z <= map.getMinZoom() + 1e-6;
   }
+  const zClass = () => el.classList.toggle("z-out", map.getZoom() <= 12);
+  map.on("zoomend", zClass); zClass();
   map.on("zoom", updateCtl);
   map.on("zoomend", () => { updateCtl(); drawMap(); });
   map.on("moveend", () => { if (!map._animatingZoom) drawMap(); });
@@ -2636,7 +2690,7 @@ function buildLegend() {
   const dot = t => '<span class="lg-c t-'+t[0]+'"><i></i>'+t[1]+'</span>';
   const cat = c => '<span class="lg-k"><svg viewBox="-12 -12 24 24" aria-hidden="true"><circle class="lg-pin" r="10.5"/>'+catGlyph(c, 10.5, "lg-gl")+'</svg>'+escapeHtml(CATS[c].label)+'</span>';
   document.getElementById("mapLegend").innerHTML =
-    '<div class="lg-row">'+[["space-available","Space available"],["getting-busy","Getting busy"],["very-busy","Very busy"],["closed","Closed"]].map(dot).join("")+'</div>'
+    '<div class="lg-row">'+[["space-available","Space available"],["getting-busy","Getting busy"],["very-busy","Very busy"],["closed","Closed"]].map(dot).join("")+'<span class="lg-sample">(sample)</span></div>'
     + '<div class="lg-row">'+cat("boatup")+cat("lakeview")+cat("offwater")
     + '<span class="lg-k"><svg viewBox="-12 -12 24 24" aria-hidden="true"><rect x="-8" y="-4.5" width="16" height="9" rx="2.5" fill="#4aa8ff" stroke="#fff" stroke-width="1"/></svg>Pool cam</span></div>';
 }
@@ -2645,6 +2699,8 @@ function initCategoryUi() {
   buildLegend();
   document.querySelectorAll("[data-n]").forEach(b => { b.textContent = VENUES.filter(v => matchesFilter(v, b.dataset.n)).length; });
   buildKey();
+  const lgBtn = document.getElementById("legendBtn"), ftr = document.querySelector(".map-footer");
+  lgBtn.onclick = () => { const o = ftr.classList.toggle("lg-open"); lgBtn.setAttribute("aria-expanded", o ? "true" : "false"); };
   const lg = document.querySelector(".map-footer"); L.DomEvent.disableClickPropagation(lg); L.DomEvent.disableScrollPropagation(lg);
 }
 
